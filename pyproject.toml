@@ -9,6 +9,7 @@ dependencies = [
     "jupyter>=1.1.1",
     "keras>=3.13.2",
     "matplotlib>=3.10.8",
+    "pandas>=3.0.0",
     "pydot>=4.0.1",
     "tensorflow>=2.20.0",
     "torch>=2.10.0",
