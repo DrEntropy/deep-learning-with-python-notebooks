@@ -1,0 +1,16 @@
+[project]
+name = "keras-test"
+version = "0.1.0"
+description = "experiments with keras"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jax>=0.9.0.1",
+    "jupyter>=1.1.1",
+    "keras>=3.13.2",
+    "matplotlib>=3.10.8",
+    "pydot>=4.0.1",
+    "tensorflow>=2.20.0",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+]
