@@ -1,1 +1,7 @@
 .venv
+.env
+train
+dogs_vs_cats_small
+*.keras
+*.ipynb_checkpoints
+__pycache__
