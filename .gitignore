@@ -5,3 +5,4 @@ dogs_vs_cats_small
 *.keras
 *.ipynb_checkpoints
 __pycache__
+filters_for*
