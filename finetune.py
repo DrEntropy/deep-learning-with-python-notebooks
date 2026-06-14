@@ -7,13 +7,20 @@ single A100-80GB GPU (e.g. a RunPod pod with a persistent /workspace volume).
 Install dependencies (TF cpu build is fine; it is only used for tf.data / tokenizer):
     pip install -U "jax[cuda12]" keras keras-hub tensorflow-cpu kagglehub python-dotenv
 
-Kaggle credentials (Gemma is gated) are read from a .env file next to this script,
-e.g.:
+Kaggle credentials (Gemma is gated) are read from a .env file next to this script.
+Use the current single-token scheme (Kaggle Settings -> API -> "Generate New Token"):
+    KAGGLE_API_TOKEN=your_token
+Or the legacy username/key pair ("Create Legacy API Key" -> kaggle.json):
     KAGGLE_USERNAME=your_username
     KAGGLE_KEY=your_key
 
 Run detached so a dropped SSH connection does not kill training:
     nohup python finetune.py &
+
+Recommended instead: run inside tmux so you can watch the live progress bar and
+still survive a disconnect:
+    tmux new -s finetune      # then: python finetune.py
+    # detach: Ctrl-b then d   |   reattach: tmux attach -t finetune
 """
 
 import os
@@ -41,10 +48,13 @@ WORKSPACE = "/workspace"
 
 
 def main():
-    # Gemma is gated on Kaggle. For a headless run, put KAGGLE_USERNAME and
-    # KAGGLE_KEY in the .env file (loaded above) or the environment; these are
+    # Gemma is gated on Kaggle. For a headless run, put credentials in the .env
+    # file (loaded above) or the environment: either the current single-token
+    # KAGGLE_API_TOKEN, or the legacy KAGGLE_USERNAME + KAGGLE_KEY pair. These are
     # picked up automatically. Otherwise fall back to interactive login.
-    if not (os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY")):
+    has_token = bool(os.environ.get("KAGGLE_API_TOKEN"))
+    has_legacy = bool(os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY"))
+    if not (has_token or has_legacy):
         kagglehub.login()
 
     # --- Load the pretrained model -----------------------------------------
