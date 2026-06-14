@@ -5,13 +5,23 @@ Extracted from `chapter16_text-generation.ipynb` (Deep Learning with Python, 3rd
 single A100-80GB GPU (e.g. a RunPod pod with a persistent /workspace volume).
 
 Install dependencies (TF cpu build is fine; it is only used for tf.data / tokenizer):
-    pip install -U "jax[cuda12]" keras keras-hub tensorflow-cpu kagglehub
+    pip install -U "jax[cuda12]" keras keras-hub tensorflow-cpu kagglehub python-dotenv
+
+Kaggle credentials (Gemma is gated) are read from a .env file next to this script,
+e.g.:
+    KAGGLE_USERNAME=your_username
+    KAGGLE_KEY=your_key
 
 Run detached so a dropped SSH connection does not kill training:
     nohup python finetune.py &
 """
 
 import os
+
+# Load credentials (e.g. KAGGLE_USERNAME / KAGGLE_KEY) from a .env file, if present.
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Must be set before importing keras / tensorflow.
 os.environ["KERAS_BACKEND"] = "jax"
@@ -31,9 +41,9 @@ WORKSPACE = "/workspace"
 
 
 def main():
-    # Gemma is gated on Kaggle. For a headless run, set the KAGGLE_USERNAME and
-    # KAGGLE_KEY environment variables (or place kaggle.json in ~/.kaggle/); these
-    # are picked up automatically. Otherwise fall back to interactive login.
+    # Gemma is gated on Kaggle. For a headless run, put KAGGLE_USERNAME and
+    # KAGGLE_KEY in the .env file (loaded above) or the environment; these are
+    # picked up automatically. Otherwise fall back to interactive login.
     if not (os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY")):
         kagglehub.login()
 
